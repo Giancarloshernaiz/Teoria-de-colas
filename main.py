@@ -6,19 +6,19 @@
 
 # Enunciado: Modela un sistema de colas que permita retrabajos. Implementa un mecanismo en el que los clientes que no fueron atendidos correctamente puedan regresar al final de la cola. Calcula el impacto en el tiempo promedio en el sistema y la tasa de retrabajos.
 '''
-import flet as fl
-import random
+import flet as fl #IMPORTAMOS LA LIBRERÍA FLET
+import random #IMPORTAMOS LA LIBRERÍA RANDOM
 
-async def main(page: fl.Page) -> None:
+async def main(page: fl.Page) -> None: #FUNCIÓN PRINCIPAL
   page.title = "Colas con Retrabajos"
   page.vertical_alignment = fl.MainAxisAlignment.CENTER
   page.horizontal_alignment = fl.MainAxisAlignment.CENTER
   page.window_center()
   page.window_resizable = False
   
-  def route_change(e:fl.RouteChangeEvent) -> None:
+  def route_change(e:fl.RouteChangeEvent) -> None: #FUNCIÓN PARA CAMBIAR DE RUTA
     
-    def show_values(e:fl.KeyboardType) -> None:
+    def show_values(e:fl.KeyboardType) -> None: #FUNCIÓN PARA MOSTRAR LOS VALORES INGRESADOS
       global tiempo, carros
       try:
         carros = nro_carros.value.split(",")
@@ -28,32 +28,32 @@ async def main(page: fl.Page) -> None:
       except:
         pass
     
-    def result(carros, tiempo) -> str:
+    def result(carros, tiempo) -> str: #FUNCIÓN PARA CALCULAR EL RESULTADO
       tiempo_carro = []
-      for i in range(len(carros)):
-        tiempo_carro.append(random.randint(1,3))
-      retrabajos = random.randint(0, len(carros))
-      tiempo_final = sum(tiempo_carro) + retrabajos
+      for i in range(len(carros)): #TIEMPO DE CADA CARRO
+        tiempo_carro.append(random.randint(1,3)) #TIEMPO RANDOM DE CADA CARRO
+      retrabajos = random.randint(0, len(carros)) #TASA DE RETRABAJOS RANDOM
+      tiempo_final = sum(tiempo_carro) + retrabajos #TIEMPO FINAL
       
-      tiempo_correjido = 0
+      tiempo_corregido = 0 
       i = 0
-      if tiempo_final > tiempo:
-        while tiempo_correjido < tiempo:
-          tiempo_correjido += tiempo_carro[i]
+      if tiempo_final > tiempo: #SI EL TIEMPO FINAL ES MAYOR AL TIEMPO DADO
+        while tiempo_corregido < tiempo: 
+          tiempo_corregido += tiempo_carro[i] #SE CALCULA EL TIEMPO CORREGIDO (SI NO DA TIEMPO DE ATENDER A TODOS LOS CARROS)
           i += 1
-        return(f"No todos los carros de la cola pudieron ser atendidos en el tiempo dado. \n El tiempo total es: {tiempo_correjido}s.\n La tasa de retrabajos de {retrabajos}.")
+        return(f"No todos los carros de la cola pudieron ser atendidos en el tiempo dado. \n El tiempo total es: {tiempo_corregido}s.\n La tasa de retrabajos de {retrabajos}.") #SE MUESTRA EL MENSAJE SI NO DA TIEMPO DE ATENDER A TODOS LOS CARROS
       else:
-        return(f"El tiempo total de los carros atendidos es de: {tiempo_final}\n La tasa de retrabajos es de {retrabajos}.") 
+        return(f"El tiempo total de los carros atendidos es de: {tiempo_final}\n La tasa de retrabajos es de {retrabajos}.") #SE MUESTRA EL MENSAJE SI DA TIEMPO DE ATENDER A TODOS LOS CARROS
         
-    nro_carros = fl.TextField(label="Ingrese el número de carros", on_submit=show_values)
-    tiempo_simulacion = fl.TextField(label="Ingrese el tiempo de simulación", on_change=show_values)
-    cola = fl.TextField(label='Cola',disabled=True, value=' ')
+    nro_carros = fl.TextField(label="Ingrese el número de carros", on_submit=show_values) #CAMPO DE TEXTO PARA INGRESAR EL NÚMERO DE CARROS
+    tiempo_simulacion = fl.TextField(label="Ingrese el tiempo de simulación", on_change=show_values) #CAMPO DE TEXTO PARA INGRESAR EL TIEMPO DE SIMULACIÓN
+    cola = fl.TextField(label='Cola',disabled=True, value=' ') #CAMPO DE TEXTO PARA MOSTRAR LA COLA
     
-    page.views.clear()
+    page.views.clear() #LIMPIAMOS LA PÁGINA
     
-    page.views.append(
+    page.views.append( #CREAMOS LA PÁGINA PRINCIPAL
       fl.View(
-        route='/',
+        route='/', #RUTA PRINCIPAL DE LA PÁGINA
         controls=[
           fl.Column([
             fl.Text("Colas con retrabajo", text_align=fl.MainAxisAlignment.CENTER, weight=500, size=70),
@@ -70,7 +70,7 @@ async def main(page: fl.Page) -> None:
       )
     )
     
-    if page.route == '/Datos':
+    if page.route == '/Datos': #CREAMOS LA RUTA DE LA PÁGINA DE DATOS
       
       page.views.append(
         fl.View(
@@ -105,7 +105,7 @@ async def main(page: fl.Page) -> None:
         )
       )
     
-    if page.route == '/Tiempos':
+    if page.route == '/Tiempos': #AGREGAMOS LA RUTA DE LA PÁGINA DE TIEMPOS
       
       res = fl.TextField(value=result(carros, tiempo), multiline=True, read_only=True, height=740)
       
@@ -127,16 +127,16 @@ async def main(page: fl.Page) -> None:
         )
       )
           
-    page.update()
+    page.update() #ACTUALIZAMOS LA PÁGINA
   
-  def view_pop(e:fl.ViewPopEvent) -> None:
+  def view_pop(e:fl.ViewPopEvent) -> None: #FUNCIÓN PARA VOLVER A LA PÁGINA ANTERIOR
     page.views.pop()
     top_view: fl.View = page.views[-1]
     page.go(top_view.route)
     
-  page.on_route_change = route_change
-  page.on_view_pop = view_pop  
-  page.go(page.route)
+  page.on_route_change = route_change #LLAMAMOS A LA FUNCIÓN DE CAMBIO DE RUTA
+  page.on_view_pop = view_pop  #LLAMAMOS A LA FUNCIÓN DE VOLVER A LA PÁGINA ANTERIOR
+  page.go(page.route) #LLAMAMOS A LA RUTA ACTUAL DE LA PÁGINA
   
-if __name__ == '__main__':
+if __name__ == '__main__': #FUNCIÓN PRINCIPAL
   fl.app(target=main)
